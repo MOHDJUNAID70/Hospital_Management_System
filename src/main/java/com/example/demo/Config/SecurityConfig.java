@@ -2,7 +2,6 @@ package com.example.demo.Config;
 
 import com.example.demo.JWT.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -20,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -46,7 +44,8 @@ public class SecurityConfig {
                     "/",
                     "/logins",
                     "/reg",
-                    "/user/reg",
+                    "/user/register",
+                    "/users/register",
                     "/user/login",
                     "/css/**",
                     "/js/**",
