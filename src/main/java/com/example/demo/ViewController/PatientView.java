@@ -13,4 +13,10 @@ import java.util.List;
 @Controller
 @RequestMapping("patient")
 public class PatientView {
+
+
+    @GetMapping("/book-appointment")
+    public String bookAppointment(Model model) {
+        return "appointments/BookAppointments";
+    }
 }

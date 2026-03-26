@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/book-appointment.css}">
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <i class="fa-solid fa-user"></i>
+            <span>Patient Portal</span>
+        </div>
+
+        <a th:href="@{/patient/dashboard}">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+        </a>
+        <a class="active" th:href="@{/patient/book-appointment}">
+            <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+        </a>
+        <a th:href="@{/patient/appointments}">
+            <i class="fa-solid fa-calendar-check"></i> My Appointments
+        </a>
+        <a th:href="@{/patient/records}">
+            <i class="fa-solid fa-file-medical"></i> Medical Records
+        </a>
+        <a th:href="@{/patient/billing}">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Billing History
+        </a>
+        <a th:href="@{/patient/profile}">
+            <i class="fa-solid fa-user"></i> Profile
+        </a>
+
+        <div class="profile-menu">
+            <i class="fa-solid fa-circle-user profile-icon" id="profileIcon"></i>
+            <div class="dropdown" id="profileDropdown">
+                <a th:href="@{/patient/profile}">My Profile</a>
+                <a th:href="@{/settings}">Settings</a>
+                <a th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="content">
+        <section class="booking-page">
+            <div class="booking-header">
+                <h1 class="booking-title">Book Appointment</h1>
+                <p class="booking-subtitle">Choose an available doctor, then pick date and start time.</p>
+            </div>
+
+            <div class="booking-card">
+                <form class="booking-form" id="bookAppointmentForm" method="post" onsubmit="return false;">
+                    <div class="field-group">
+                        <label for="doctorId"><i class="fa-solid fa-user-doctor"></i> Available Doctor</label>
+                        <select id="doctorId" name="doctorId" class="field-control" required>
+                            <option value="" selected disabled>Select doctor</option>
+                            <option th:if="${availableDoctors != null}" th:each="doctor : ${availableDoctors}"
+                                    th:value="${doctor.id}"
+                                    th:text="${doctor.name + ' - ' + doctor.specialization}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="appointmentDate"><i class="fa-regular fa-calendar"></i> Appointment Date</label>
+                        <input type="date" id="appointmentDate" name="appointmentDate" class="field-control" required>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="startTime"><i class="fa-regular fa-clock"></i> Start Time</label>
+                        <input type="time" id="startTime" name="startTime" class="field-control" required>
+                    </div>
+                </form>
+
+                <div class="form-actions">
+                    <button type="submit" form="bookAppointmentForm" class="book-btn">
+                        <i class="fa-solid fa-check"></i> Book Appointment
+                    </button>
+                </div>
+
+                <div class="helper-row" th:if="${availableDoctors == null or #lists.isEmpty(availableDoctors)}">
+                    <p class="empty-doctors"><i class="fa-solid fa-circle-info"></i> No available doctors right now.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        const icon = document.getElementById('profileIcon');
+        const dropdown = document.getElementById('profileDropdown');
+        const appointmentDate = document.getElementById('appointmentDate');
+
+        if (icon && dropdown) {
+            icon.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', function () {
+                dropdown.classList.remove('show');
+            });
+        }
+
+        if (appointmentDate) {
+            const today = new Date();
+            const minDate = today.toISOString().split('T')[0];
+            appointmentDate.setAttribute('min', minDate);
+        }
+    });
+</script>
+</body>
+</html>

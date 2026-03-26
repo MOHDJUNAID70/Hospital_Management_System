@@ -169,6 +169,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>HMS</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

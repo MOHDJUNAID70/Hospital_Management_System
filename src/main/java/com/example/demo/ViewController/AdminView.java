@@ -128,7 +128,7 @@ public class AdminView {
     }
 
 //    PatientInfo
-@GetMapping("/patients/info1")
+@GetMapping("/patients/info")
 public String patientInfo(
         Model model,
         @org.springframework.web.bind.annotation.RequestParam(required = false, defaultValue = "1") Integer pageNo,
@@ -150,7 +150,7 @@ public String patientInfo(
     return "patient/patientInfo";
 }
 
-    @GetMapping("/patients/info")
+    @GetMapping("/patients/info1")
     public String patientInfo(Model model){
         List<PatientDTO> patients=patientService.getAllPatients();
         model.addAttribute("patients", patients);

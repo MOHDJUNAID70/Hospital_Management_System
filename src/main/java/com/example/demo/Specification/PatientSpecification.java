@@ -30,7 +30,7 @@ public class PatientSpecification {
                            criteriaBuilder.lessThanOrEqualTo(root.get("age"), EndAge)
                    ));
                }
-                return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
             }
         };
     }

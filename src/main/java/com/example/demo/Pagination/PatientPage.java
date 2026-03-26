@@ -25,8 +25,8 @@ public class PatientPage {
 
     @GetMapping("patient/details")
     public Page<PatientDTO> getPatients(
-            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
-            @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int pageSize,
             @RequestParam(required = false, defaultValue = "id") String sortBy,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String address,

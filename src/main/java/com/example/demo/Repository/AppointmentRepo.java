@@ -49,4 +49,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     Page<Appointment> findByStatus(Pageable pageable, AppointmentStatus status);
 
     Appointment findByAppointmentDate(LocalDate date);
+
+    long countByAppointmentDate(LocalDate date);
 }

@@ -59,9 +59,9 @@ public class SecurityConfig {
                 .successHandler(customAuthenticationSuccessHandler)
                 .permitAll()
                 )
-            .oauth2Login(oauth -> oauth
-                    .loginPage("/logins")
-                    .successHandler(customAuthenticationSuccessHandler))
+//            .oauth2Login(oauth -> oauth
+//                    .loginPage("/logins")
+//                    .successHandler(customAuthenticationSuccessHandler))
             .logout(
                     logout -> logout
                             .logoutUrl("/logout")
