@@ -180,6 +180,13 @@ public String patientInfo(
         model.addAttribute("appointmentEndTime", appointmentEndTime);
         return "appointments/appointmentInfo";
     }
+
+    @GetMapping("/appointment/details/{id}")
+    public String appointmentDetails(@PathVariable int id, Model model){
+        AppointmentDTO appointmentDTO=appointmentService.getAppointmentsById(id);
+        model.addAttribute("appointmentDTO", appointmentDTO);
+        return "appointments/appointmentDetails";
+    }
 }
 
 

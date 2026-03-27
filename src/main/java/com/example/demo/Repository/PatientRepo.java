@@ -23,11 +23,9 @@ public interface PatientRepo extends JpaRepository<Patient, Integer>, JpaSpecifi
 
     List<Patient> getPatientsByAge(int age);
 
-    @Transactional
     Page<Patient> findByGender(Pageable pageable, Gender gender, Specification<Patient> specification);
 
 
-    @Transactional
     List<Patient> findByAgeIsGreaterThanEqual(Integer age);
 
     Patient findByNameAndUser(@NotBlank @Size(min = 3, max = 50) @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must only contain alphabets and space") String name, Users user);

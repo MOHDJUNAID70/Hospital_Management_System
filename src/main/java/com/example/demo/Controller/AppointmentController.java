@@ -1,9 +1,15 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.Doctor.DoctorDTO;
+import com.example.demo.DTO.Patient.PatientDTO;
+import com.example.demo.DTO.User.UserSummaryDTO;
+import com.example.demo.ExceptionHandler.CustomException;
 import com.example.demo.Locking.OptimisticLocking;
 import com.example.demo.DTO.AppointmentDTO;
 import com.example.demo.Model.Appointment;
+import com.example.demo.Repository.AppointmentRepo;
 import com.example.demo.Service.AppointmentService;
+import com.example.demo.Users.CurrentUser;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +29,10 @@ public class AppointmentController {
 
     @Autowired
     private OptimisticLocking optimisticLocking;
+    @Autowired
+    private AppointmentRepo appointmentRepo;
+    @Autowired
+    private CurrentUser currentUser;
 
     @GetMapping("/all_appointments")
     public List<AppointmentDTO> getAppointments() {
@@ -70,5 +80,10 @@ public class AppointmentController {
     public ResponseEntity<String> deleteAppointmentById(@RequestParam("id") Integer id){
         appointmentService.deleteAppointmentById(id);
         return new ResponseEntity<>("Your Appointment has been Deleted", HttpStatus.OK);
+    }
+
+    @GetMapping("/get-appointment-by-Id/{id}")
+    public AppointmentDTO getAppointmentById(@PathVariable("id") Integer id){
+        return appointmentService.getAppointmentsById(id);
     }
 }

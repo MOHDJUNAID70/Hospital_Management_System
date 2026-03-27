@@ -291,18 +291,20 @@
             </div>
             <!-- Cards -->
             <div class="appt-cards">
-                <div class="appt-card" th:each="appt : ${appointments.content}">
-                    <i class="fa-solid fa-calendar-check card-icon"></i>
-                    <div class="card-id">Appointment #<span th:text="${appt.id}"></span></div>
-                    <div class="card-patient">Patient Name: <span th:text="${appt.patientInfo.name}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-user-doctor"></i><span th:text="${appt.doctorInfo.name}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-stethoscope"></i> <span th:text="${appt.doctorInfo.specialization}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-calendar-day"></i> Date: <span th:text="${appt.appointmentDate}"></span></div>
-                    <div class="card-detail"><i class="fa-solid fa-clock"></i> Time: <span th:text="${#temporals.format(appt.appointmentTime,'hh:mm a')}"></span> - <span th:text="${#temporals.format(appt.appointmentEndTime,'hh:mm a')}"></span></div>
-                    <div class="card-badge"
-                         th:classappend="${appt.status.name() == 'Booked'} ? 'badge-Booked' : (${appt.status.name() == 'Cancelled'} ? 'badge-Cancelled' : (${appt.status.name() == 'Rescheduled'} ? 'badge-Rescheduled' : 'badge-default'))"
-                         th:text="${appt.status}"></div>
-                </div>
+                <a th:href="@{/admin/appointment/details/{id}(id=${appt.id})}" style="text-decoration: none; color: inherit;" th:each="appt : ${appointments.content}">
+                    <div class="appt-card" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)'">
+                        <i class="fa-solid fa-calendar-check card-icon"></i>
+                        <div class="card-id">Appointment #<span th:text="${appt.id}"></span></div>
+                        <div class="card-patient">Patient Name: <span th:text="${appt.patientInfo.name}"></span></div>
+                        <div class="card-detail"><i class="fa-solid fa-user-doctor"></i><span th:text="${appt.doctorInfo.name}"></span></div>
+<!--                    <div class="card-detail"><i class="fa-solid fa-stethoscope"></i> <span th:text="${appt.doctorInfo.specialization}"></span></div>-->
+<!--                        <div class="card-detail"><i class="fa-solid fa-calendar-day"></i> Date: <span th:text="${appt.appointmentDate}"></span></div>-->
+<!--                        <div class="card-detail"><i class="fa-solid fa-clock"></i> Time: <span th:text="${#temporals.format(appt.appointmentTime,'hh:mm a')}"></span> - <span th:text="${#temporals.format(appt.appointmentEndTime,'hh:mm a')}"></span></div>-->
+                        <div class="card-badge"
+                             th:classappend="${appt.status.name() == 'Booked'} ? 'badge-Booked' : (${appt.status.name() == 'Cancelled'} ? 'badge-Cancelled' : (${appt.status.name() == 'Rescheduled'} ? 'badge-Rescheduled' : 'badge-default'))"
+                             th:text="${appt.status}"></div>
+                    </div>
+                </a>
             </div>
             <!-- Pagination -->
             <div class="pagination" th:if="${appointments.totalPages > 1}">

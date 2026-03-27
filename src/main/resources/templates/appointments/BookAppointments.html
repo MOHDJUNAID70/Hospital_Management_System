@@ -50,30 +50,59 @@
         <section class="booking-page">
             <div class="booking-header">
                 <h1 class="booking-title">Book Appointment</h1>
-                <p class="booking-subtitle">Choose an available doctor, then pick date and start time.</p>
+                <p class="booking-subtitle">Choose doctor, patient, date, and start time for booking.</p>
             </div>
 
             <div class="booking-card">
-                <form class="booking-form" id="bookAppointmentForm" method="post" onsubmit="return false;">
+                <div class="helper-row" th:if="${bookingSuccess != null}">
+                    <p class="empty-doctors"><i class="fa-solid fa-circle-check"></i> <span th:text="${bookingSuccess}"></span></p>
+                </div>
+
+                <div class="helper-row" th:if="${bookingError != null}">
+                    <p class="empty-doctors"><i class="fa-solid fa-triangle-exclamation"></i> <span th:text="${bookingError}"></span></p>
+                </div>
+
+                <form class="booking-form" id="bookAppointmentForm" method="post" th:action="@{/patient/appointment-booked}" th:object="${appointmentForm}">
                     <div class="field-group">
                         <label for="doctorId"><i class="fa-solid fa-user-doctor"></i> Available Doctor</label>
-                        <select id="doctorId" name="doctorId" class="field-control" required>
+                        <select id="doctorId" th:field="*{doctorId}" class="field-control" required>
                             <option value="" selected disabled>Select doctor</option>
                             <option th:if="${availableDoctors != null}" th:each="doctor : ${availableDoctors}"
                                     th:value="${doctor.id}"
                                     th:text="${doctor.name + ' - ' + doctor.specialization}">
                             </option>
                         </select>
+                        <small th:if="${#fields.hasErrors('doctorId')}" th:errors="*{doctorId}"></small>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="patientId"><i class="fa-solid fa-user-group"></i> Patient</label>
+                        <select id="patientId" th:field="*{patientId}" class="field-control" required>
+                            <option value="" selected disabled>Select patient</option>
+                            <option th:if="${userPatients != null}" th:each="patient : ${userPatients}"
+                                    th:value="${patient.id}"
+                                    th:text="${patient.name + ' - ' + patient.age + ' yrs'}">
+                            </option>
+                        </select>
+                        <small th:if="${#fields.hasErrors('patientId')}" th:errors="*{patientId}"></small>
                     </div>
 
                     <div class="field-group">
                         <label for="appointmentDate"><i class="fa-regular fa-calendar"></i> Appointment Date</label>
-                        <input type="date" id="appointmentDate" name="appointmentDate" class="field-control" required>
+                        <input type="date" id="appointmentDate" th:field="*{appointmentDate}" class="field-control" required>
+                        <small th:if="${#fields.hasErrors('appointmentDate')}" th:errors="*{appointmentDate}"></small>
                     </div>
 
                     <div class="field-group">
-                        <label for="startTime"><i class="fa-regular fa-clock"></i> Start Time</label>
-                        <input type="time" id="startTime" name="startTime" class="field-control" required>
+                        <label for="startTime"><i class="fa-regular fa-clock"></i> Start Time (30-min slots)</label>
+                        <select id="startTime" th:field="*{startTime}" class="field-control" required>
+                            <option value="" selected disabled>Select time slot</option>
+                            <option th:each="slot : ${availableTimeSlots}"
+                                    th:value="${slot}"
+                                    th:text="${#temporals.format(slot, 'HH:mm')}">
+                            </option>
+                        </select>
+                        <small th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}"></small>
                     </div>
                 </form>
 
@@ -85,6 +114,10 @@
 
                 <div class="helper-row" th:if="${availableDoctors == null or #lists.isEmpty(availableDoctors)}">
                     <p class="empty-doctors"><i class="fa-solid fa-circle-info"></i> No available doctors right now.</p>
+                </div>
+
+                <div class="helper-row" th:if="${userPatients == null or #lists.isEmpty(userPatients)}">
+                    <p class="empty-doctors"><i class="fa-solid fa-circle-info"></i> No patients found. Add a patient profile first.</p>
                 </div>
             </div>
         </section>

@@ -4,6 +4,7 @@ import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Model.Appointment;
 import com.example.demo.Model.Doctor;
 import com.example.demo.Model.Patient;
+import com.example.demo.Model.Users;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +48,11 @@ public interface AppointmentRepo extends JpaRepository<Appointment, Long>, JpaSp
     Optional< List<Appointment>> findByDoctorAndAppointmentDateAndStatusAndAppointmentTimeBeforeOrAppointmentEndTimeAfter(Doctor doctor, LocalDate localDate, AppointmentStatus appointmentStatus, @NotNull LocalTime startTime, @NotNull LocalTime endTime);
 
     Page<Appointment> findByStatus(Pageable pageable, AppointmentStatus status);
-
     Appointment findByAppointmentDate(LocalDate date);
 
     long countByAppointmentDate(LocalDate date);
+
+    List<Appointment> findByUser(Users user);
+
+    Page<Appointment> findByUser(Users user, Pageable pageable);
 }

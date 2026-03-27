@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/variables.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            padding: 20px;
+        }
+        .details-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .details-header {
+            background: linear-gradient(135deg, #00c6ff 0%, #232946 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .details-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+        .appointment-id {
+            font-size: 1.1em;
+            opacity: 0.9;
+            letter-spacing: 1px;
+        }
+        .details-content {
+            padding: 40px 30px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #232946;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #00c6ff;
+        }
+        .section-title i {
+            color: #00c6ff;
+            font-size: 1.3em;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .info-card {
+            background: linear-gradient(135deg, #f8fafd 0%, #e3e9f7 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #00c6ff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 198, 255, 0.15);
+        }
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .info-label i {
+            color: #00c6ff;
+        }
+        .info-value {
+            font-size: 1.3em;
+            color: #232946;
+            font-weight: 700;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+        .status-booked {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .status-rescheduled {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-completed {
+            background-color: #cfe2ff;
+            color: #084298;
+        }
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .details-table tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .details-table td {
+            padding: 15px 0;
+        }
+        .details-table td:first-child {
+            font-weight: 600;
+            color: #00c6ff;
+            width: 35%;
+        }
+        .details-table td:last-child {
+            color: #232946;
+            font-size: 1.05em;
+        }
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-back {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: white;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 198, 255, 0.4);
+        }
+        .btn-edit {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: white;
+        }
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 198, 255, 0.4);
+        }
+        .btn-cancel {
+            background: linear-gradient(90deg, #232946 0%, #00c6ff 100%);
+            color: white;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 198, 255, 0.4);
+        }
+        .time-slot {
+            background: linear-gradient(90deg, #00c6ff 0%, #232946 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00c6ff, transparent);
+            margin: 30px 0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state-icon {
+            font-size: 4em;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <div class="details-header">
+            <h1><i class="fa-solid fa-calendar-check"></i> Appointment Details</h1>
+            <div class="appointment-id">Appointment #<span th:text="${appointmentDTO.id}"></span></div>
+        </div>
+
+        <div class="details-content">
+            <!-- Status Section -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fa-solid fa-circle-info"></i> Status
+                </div>
+                <span class="status-badge"
+                      th:classappend="${appointmentDTO.status.name() == 'Booked'} ? 'status-booked' :
+                                       (${appointmentDTO.status.name() == 'Cancelled'} ? 'status-cancelled' :
+                                       (${appointmentDTO.status.name() == 'Rescheduled'} ? 'status-rescheduled' : 'status-completed'))"
+                      th:text="${appointmentDTO.status}">
+                </span>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Doctor Information -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fa-solid fa-user-doctor"></i> Doctor Information
+                </div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-user"></i> Doctor Name
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.doctorInfo.name}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-stethoscope"></i> Specialization
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.doctorInfo.specialization}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Patient Information -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fa-solid fa-user-group"></i> Patient Information
+                </div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-user"></i> Patient Name
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.name}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-cake-candles"></i> Age
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.age}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-venus-mars"></i> Gender
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.gender}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-phone"></i> Phone
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.phone}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-phone"></i> Added By User
+                        </div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.userInfo.userId}"></div>
+                        <div class="info-value" th:text="${appointmentDTO.patientInfo.userInfo.username}"></div>
+                    </div>
+                </div>
+                <table class="details-table">
+                    <tr>
+                        <td><i class="fa-solid fa-location-dot"></i> Address</td>
+                        <td th:text="${appointmentDTO.patientInfo.address}"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Appointment Schedule -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fa-solid fa-calendar-days"></i> Appointment Schedule
+                </div>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-calendar-day"></i> Date
+                        </div>
+                        <div class="info-value" th:text="${#temporals.format(appointmentDTO.appointmentDate, 'dd MMMM yyyy')}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-clock"></i> Start Time
+                        </div>
+                        <div class="info-value" th:text="${#temporals.format(appointmentDTO.appointmentTime, 'HH:mm')}"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">
+                            <i class="fa-solid fa-hourglass-end"></i> End Time
+                        </div>
+                        <div class="info-value" th:text="${#temporals.format(appointmentDTO.appointmentEndTime, 'HH:mm')}"></div>
+                    </div>
+                </div>
+                <div class="time-slot">
+                    <i class="fa-solid fa-clock"></i> Duration: 30 Minutes
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <a th:href="@{/admin/appointments/info}" class="btn btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Appointments
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

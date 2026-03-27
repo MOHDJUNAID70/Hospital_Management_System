@@ -1,5 +1,8 @@
 package com.example.demo.Service;
 
+import com.example.demo.DTO.Doctor.DoctorDTO;
+import com.example.demo.DTO.Patient.PatientDTO;
+import com.example.demo.DTO.User.UserSummaryDTO;
 import com.example.demo.Enum.AppointmentStatus;
 import com.example.demo.Enum.WorkingDay;
 import com.example.demo.ExceptionHandler.CustomException;
@@ -47,6 +50,28 @@ public class AppointmentService {
     private IdempotencyRepo idempotencyRepo;
     @Autowired
     private RedisIdempotencyService redisIdempotencyService;
+
+    @Transactional
+    public void bookAppointmentForUser(Integer doctorId, Integer patientId, LocalDate appointmentDate, LocalTime startTime, Users user) {
+        Patient patient = patientRepo.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        if (patient.getUser() == null || patient.getUser().getUserId() != user.getUserId()) {
+            throw new CustomException("You can only book appointments for patients added by your account");
+        }
+
+        Doctor doctor = new Doctor();
+        doctor.setId(doctorId);
+
+        Appointment appointment = new Appointment();
+        appointment.setDoctor(doctor);
+        appointment.setPatient(patient);
+        appointment.setAppointmentDate(appointmentDate);
+        appointment.setAppointmentTime(startTime);
+        appointment.setUser(user);
+
+        BookTheAppointment(appointment);
+    }
 
 //    fetch all appointments
     public List<AppointmentDTO> getAllAppointments(){
@@ -202,6 +227,7 @@ public class AppointmentService {
         app.setStatus(appointment.getStatus());
         app.setStartTs(Timestamp.valueOf(appointmentDateTime));
         app.setEndTs(Timestamp.valueOf(localDateTimeEndTs));
+        app.setUser(appointment.getUser());
         appointmentRepo.save(app);
     }
 
@@ -263,4 +289,49 @@ public class AppointmentService {
         return appointmentRepo.findAll(spec, pageable).map(appointMapper::ToDTO);
     }
 
+    // Fetch all appointments for current user
+    public List<AppointmentDTO> getUserAppointments(Users user) {
+        List<Appointment> appointments = appointmentRepo.findByUser(user);
+        if(appointments.isEmpty()){
+            throw new CustomException("No appointments found for this user");
+        }
+        return appointments.stream().map(appointMapper::ToDTO).toList();
+    }
+
+    // Fetch user appointments with pagination
+    public Page<AppointmentDTO> getUserAppointmentsWithPagination(Users user, Pageable pageable) {
+        return appointmentRepo.findByUser(user, pageable).map(appointMapper::ToDTO);
+    }
+
+    public AppointmentDTO getAppointmentsById(Integer id) {
+        Appointment app=appointmentRepo.findById(id.longValue()).orElseThrow(()->new CustomException("Appointment not found with id: " + id));
+
+        AppointmentDTO appointmentDTO=new AppointmentDTO();
+
+        DoctorDTO doctorDTO=new DoctorDTO();
+        doctorDTO.setId(app.getDoctor().getId());
+        doctorDTO.setName(app.getDoctor().getName());
+        doctorDTO.setSpecialization(String.valueOf(app.getDoctor().getSpecialization()));
+
+        PatientDTO patientDTO=new PatientDTO();
+        patientDTO.setId(app.getPatient().getId());
+        patientDTO.setName(app.getPatient().getName());
+        patientDTO.setAge(app.getPatient().getAge());
+        patientDTO.setGender(app.getPatient().getGender());
+        patientDTO.setAddress(app.getPatient().getAddress());
+        patientDTO.setPhone(app.getPatient().getPhone());
+        UserSummaryDTO userSummaryDTO=new UserSummaryDTO();
+        userSummaryDTO.setUserId(app.getPatient().getUser().getUserId());
+        userSummaryDTO.setUsername(app.getPatient().getUser().getUsername());
+        patientDTO.setUserInfo(userSummaryDTO);
+
+        appointmentDTO.setId(app.getAppointmentid());
+        appointmentDTO.setDoctorInfo(doctorDTO);
+        appointmentDTO.setPatientInfo(patientDTO);
+        appointmentDTO.setAppointmentDate(app.getAppointmentDate());
+        appointmentDTO.setAppointmentTime(app.getAppointmentTime());
+        appointmentDTO.setAppointmentEndTime(app.getAppointmentEndTime());
+        appointmentDTO.setStatus(app.getStatus());
+        return appointmentDTO;
+    }
 }
